@@ -1,0 +1,1 @@
+You can download dataset from this link: https://www.kaggle.com/zalando-research/fashionmnist#fashion-mnist_train.csv
