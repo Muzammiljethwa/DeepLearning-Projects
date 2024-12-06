@@ -1,5 +1,5 @@
 from langchain_community.vectorstores import FAISS
-from config import embeddings, llm
+from config import embeddings, llm, llm2
 from pprint import pprint
 from langchain.retrievers.document_compressors import FlashrankRerank
 from langchain.retrievers import ContextualCompressionRetriever
@@ -56,14 +56,22 @@ PROMPT = ChatPromptTemplate.from_messages(
 )
 
 llm_chain = PROMPT | llm
+mini_llm_chain = PROMPT | llm2
+
 vectoreDB = get_vectoreDB("data/The_GALE_ENCYCLOPEDIA_of_MEDICINE_SECOND.pdf")
 
-def ask_ai(query):
+def ask_ai(query:str, model_name:str):
     docs  = vectoreDB.invoke(query)
-
     context_text = "\n\n---\n\n".join([doc.page_content for doc in docs])
-
-    response = llm_chain.invoke({
+    
+    if model_name == "4o":
+        llm = llm_chain
+    elif model_name == "4o-mini":
+        llm = mini_llm_chain
+    else:
+        return "No model found"
+    
+    response = llm.invoke({
                         "context": context_text,
                         "query" : query
                         }
